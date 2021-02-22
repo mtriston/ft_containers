@@ -1,0 +1,5 @@
+/.clang-format
+/a.out
+/CMakeLists.txt
+/cmake-build-debug/
+/.idea/
