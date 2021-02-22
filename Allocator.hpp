@@ -1,0 +1,50 @@
+//
+// Created by mtriston on 19.02.2021.
+//
+
+#ifndef FT_CONTAINERS__ALLOCATOR_HPP_
+#define FT_CONTAINERS__ALLOCATOR_HPP_
+#include <cstddef>
+#include <limits>
+#include <new>
+
+namespace ft {
+
+template<class T>
+struct Allocator {
+  typedef T value_type;
+  typedef T *pointer;
+  typedef const T *const_pointer;
+  typedef T &reference;
+  typedef const T &const_reference;
+  typedef std::size_t size_type;
+  typedef std::ptrdiff_t difference_type;
+  template< class U > struct rebind { typedef ft::Allocator<U> other; };
+
+  Allocator() {}
+  Allocator(const Allocator<T> &other) {}
+  ~Allocator() {}
+  Allocator<T> &operator=(const Allocator<T> &other) {}
+
+  pointer address(reference x) const { return &x; }
+
+  pointer allocate(size_type n, const void *hint = 0) {
+	return static_cast<pointer>(operator new(n * sizeof(value_type)));
+  }
+
+  void deallocate(pointer p, std::size_t n) {
+	for (size_t i = 0; i != n; ++i) {
+	  operator delete (p, p + sizeof(p) * n);
+	}
+  }
+
+  size_type max_size() const { return std::numeric_limits<size_type>::max() / sizeof(value_type); }
+
+  void construct(pointer p, const_reference val) { new((void *) p) T(val); }
+
+  void destroy(pointer p) { ((T *) p)->~T(); }
+};
+
+}
+
+#endif //FT_CONTAINERS__ALLOCATOR_HPP_
