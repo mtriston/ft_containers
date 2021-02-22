@@ -8,49 +8,57 @@
 
 namespace ft {
 
+template<typename T> struct ListNode;
+//TODO: https://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-html-USERS-4.2/stl__list_8h-source.html check iterator's methods
 template<typename T>
-class list_iterator : public ft::iterator<ft::bidirectional_iterator_tag, T> {
+ class list_iterator : public ft::iterator<ft::bidirectional_iterator_tag, ft::ListNode<T> > {
 
  public:
-  typedef typename ft::iterator<ft::bidirectional_iterator_tag, T>::difference_type difference_type;
-  typedef typename ft::iterator<ft::bidirectional_iterator_tag, T>::value_type value_type;
-  typedef typename ft::iterator<ft::bidirectional_iterator_tag, T>::pointer pointer;
-  typedef typename ft::iterator<ft::bidirectional_iterator_tag, T>::reference reference;
-  typedef typename ft::iterator<ft::bidirectional_iterator_tag, T>::iterator_category iterator_category;
+  typedef typename ft::iterator<ft::bidirectional_iterator_tag, ft::ListNode<T> >::difference_type difference_type;
+  typedef typename ft::iterator<ft::bidirectional_iterator_tag, ft::ListNode<T> >::value_type value_type;
+  typedef typename ft::iterator<ft::bidirectional_iterator_tag, ft::ListNode<T> >::pointer pointer;
+  typedef typename ft::iterator<ft::bidirectional_iterator_tag, ft::ListNode<T> >::reference reference;
+  typedef typename ft::iterator<ft::bidirectional_iterator_tag, ft::ListNode<T> >::iterator_category iterator_category;
 
-  explicit list_iterator(ft::ListNode<T> ptr = 0) : ptr_(ptr) {}
+  explicit list_iterator(pointer ptr = 0) : ptr_(ptr) {}
   ~list_iterator() {}
-  list_iterator(list_iterator<T> const &other) : ptr_(other.ptr_) {}
-  list_iterator<T> &operator=(list_iterator<T> const &other) {
+  list_iterator(list_iterator const &other) : ptr_(other.ptr_) {}
+  list_iterator &operator=(list_iterator const &other) {
 	ptr_(other.ptr_);
 	return (*this);
   }
-  T &operator*() { return ptr_->data; }
+
+   pointer getNode() { return ptr_; }
+
+   T &operator*() { return ptr_->data; }
   T *operator->() { return &(ptr_->data); }
-  bool operator==(iterator const &rhs) { return this->ptr_ == rhs.ptr_; }
-  bool operator!=(iterator const &rhs) { return this->ptr_ != rhs.ptr_; }
-  iterator operator++(int) {
-	iterator tmp = *this;
-	ptr_ = ptr_->next;
+  bool operator==(list_iterator const &rhs) { return this->ptr_ == rhs.ptr_; }
+  bool operator!=(list_iterator const &rhs) { return this->ptr_ != rhs.ptr_; }
+
+  list_iterator operator++(int) {
+	list_iterator tmp = *this;
+	this->operator++();
 	return tmp;
   }
-  iterator &operator++() {
+
+  list_iterator &operator++() {
 	ptr_ = ptr_->next;
 	return *this;
   }
-  iterator operator--(int) {
-	iterator tmp = *this;
-	ptr_ = ptr_->prev;
+
+  list_iterator operator--(int) {
+	list_iterator tmp = *this;
+	this->operator--();
 	return tmp;
   }
-  iterator &operator--() {
+
+  list_iterator &operator--() {
 	ptr_ = ptr_->prev;
 	return *this;
   }
 
- private:
-  pointer ptr_;
-
+  private:
+   pointer ptr_;
 };
 
 }
