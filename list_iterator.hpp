@@ -6,6 +6,8 @@
 #define FT_CONTAINERS__LISTITERATOR_HPP_
 #include "iterator.hpp"
 
+namespace ft {
+
 template<typename T>
 class list_iterator : public ft::iterator<ft::bidirectional_iterator_tag, T> {
 
@@ -51,4 +53,5 @@ class list_iterator : public ft::iterator<ft::bidirectional_iterator_tag, T> {
 
 };
 
+}
 #endif //FT_CONTAINERS__LISTITERATOR_HPP_
