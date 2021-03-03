@@ -1,33 +1,47 @@
 #include <iostream>
 #include <memory>
-//#include "List.hpp"
+#include "List.hpp"
 #include <list>
+
+template<typename List>
+void print_list(const List &x) {
+    auto itBegin = x.begin();
+    auto itEnd = x.end();
+    while (itBegin != itEnd) {
+        std::cout << *itBegin << std::endl;
+        ++itBegin;
+    }
+}
 
 int main() {
 
-  std::list<int> a;
+/* Test constructors and assignment operator */
 
-  for (int i = 0; i <= 10; ++i)
-    a.push_front(i);
+    ft::List<int> a;
+    for (int i = 0; i <= 10; ++i) {
+        a.push_back(i);
+        a.push_front(i);
+    }
+    ft::List<int> b(a);
+    for (int i = 0; i <= 5; ++i) {
+        b.pop_back();
+        b.pop_front();
+    }
+    a = b;
+    b.clear();
+    print_list(a);
 
-  a.erase(a.begin(), a.end());
-  auto begin = a.begin();
-  auto end = a.end();
+    /* Test capacity methods */
+    std::cout << " a.size() = " << a.size() << std::endl;
+    std::cout << " a.max_size() = " << a.max_size() << std::endl;
+    std::cout << " a.empty() = " << a.empty() << std::endl;
+    std::cout << " b.empty() = " << b.empty() << std::endl;
 
-  while (begin != end) {
-    std::cout << *begin++ << std::endl;
-  }
-//  ft::List<int> b;
-//
-//  for (int i = 0; i <= 10; ++i) {
-//	b.push_back(i);
-//  }
-//
-//  ft::List<int>::iterator itBegin(b.begin());
-//  ft::List<int>::iterator itEnd(b.end());
-//  while (itBegin != itEnd) {
-//    std::cout << *itBegin << std::endl;
-//    ++itBegin;
-//  }
-  return 0;
+    /* Element access */
+    std::cout << "a.front() = " << a.front() << std::endl;
+    std::cout << "a.back() = " << a.back() << std::endl;
+    std::cout << "b.front() = " << b.front() << std::endl;
+    std::cout << "b.back() = " << b.back() << std::endl;
+
+    return 0;
 }
