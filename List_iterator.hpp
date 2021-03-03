@@ -68,7 +68,7 @@ template<typename T>
 class List_const_iterator {
 
  private:
-  typedef List_iterator<T> Self;
+  typedef List_const_iterator<T> Self;
   typedef ListNode<T> Node;
   typedef List_iterator<T> iterator;
 

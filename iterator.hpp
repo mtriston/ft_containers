@@ -105,14 +105,13 @@ typename ft::iterator_traits<InputIt>::difference_type do_distance(InputIt first
 
 template<typename InputIt>
 typename ft::iterator_traits<InputIt>::difference_type do_distance(InputIt first, InputIt last, ...) {
-  size_t i = 0;
-  for (; first != last; ++first, ++i);
+  for (size_t i = 0; first != last; ++first, ++i);
   return i;
 }
 
 template<typename InputIt>
 typename ft::iterator_traits<InputIt>::difference_type distance(InputIt first, InputIt last) {
-  ft::do_distance(first, last, typename ft::iterator_traits<InputIt>::iterator_category());
+  returnr ft::do_distance(first, last); //TODO: add 3rd argument
 }
 
 }
