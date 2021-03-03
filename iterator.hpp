@@ -52,6 +52,35 @@ class iterator {
   typedef Category iterator_category;
 };
 
+template<typename Iterator>
+class reverse_iterator : public iterator<
+	typename iterator_traits<Iterator>::iterator_category,
+	typename iterator_traits<Iterator>::value_type,
+	typename iterator_traits<Iterator>::difference_type,
+	typename iterator_traits<Iterator>::pointer,
+	typename iterator_traits<Iterator>::reference> {
+
+ protected:
+  Iterator current;
+
+ public:
+  typedef Iterator iterator_type;
+  typedef typename iterator_traits<Iterator>::value_type value_type;
+  typedef typename iterator_traits<Iterator>::difference_type difference_type;
+  typedef typename iterator_traits<Iterator>::pointer pointer;
+  typedef typename iterator_traits<Iterator>::reference reference;
+
+  reverse_iterator() : current() {}
+  explicit reverse_iterator(iterator_type const &other) : current(other) {}
+  reverse_iterator(const reverse_iterator &other) : current(other.current) {}
+  template<class It>
+  reverse_iterator(const reverse_iterator<It> &other) : current(other.base()) {}
+
+  iterator_type base() const { return current; };
+
+
+};
+
 template<typename InputIt, typename Distance>
 static void do_advance(InputIt &it, Distance n, ft::random_access_iterator_tag) {
   it += n;
@@ -69,8 +98,8 @@ void advance(InputIt &it, Distance n) {
 
 template<typename InputIt>
 typename ft::iterator_traits<InputIt>::difference_type do_distance(InputIt first,
-																InputIt last,
-																ft::random_access_iterator_tag) {
+																   InputIt last,
+																   ft::random_access_iterator_tag) {
   return (last - first);
 }
 
