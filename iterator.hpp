@@ -97,21 +97,22 @@ void advance(InputIt &it, Distance n) {
 }
 
 template<typename InputIt>
-typename ft::iterator_traits<InputIt>::difference_type do_distance(InputIt first,
+static typename ft::iterator_traits<InputIt>::difference_type do_distance(InputIt first,
 																   InputIt last,
 																   ft::random_access_iterator_tag) {
   return (last - first);
 }
 
 template<typename InputIt>
-typename ft::iterator_traits<InputIt>::difference_type do_distance(InputIt first, InputIt last, ...) {
-  for (size_t i = 0; first != last; ++first, ++i);
+static typename ft::iterator_traits<InputIt>::difference_type do_distance(InputIt first, InputIt last, ...) {
+  size_t i = 0;
+  	for (; first != last; ++first, ++i);
   return i;
 }
 
 template<typename InputIt>
 typename ft::iterator_traits<InputIt>::difference_type distance(InputIt first, InputIt last) {
-  returnr ft::do_distance(first, last); //TODO: add 3rd argument
+  return ft::do_distance(first, last, typename ft::iterator_traits<InputIt>::iterator_category());
 }
 
 }
