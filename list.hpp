@@ -128,7 +128,7 @@ class list {
   }
 
   void push_front(const_reference val) {
-	insert(begin(), val); //TODO: check
+	insert(begin(), val);
   }
 
   void pop_front() {
@@ -146,8 +146,7 @@ class list {
   iterator insert(iterator position, const value_type &val) {
 	node_pointer pos = position.getNode();
 	node_pointer newNode = createNode_(val, pos->prev, pos);
-	if (pos->prev)
-	  pos->prev->next = newNode;
+	pos->prev->next = newNode;
 	pos->prev = newNode;
 	return iterator(newNode);
   }
@@ -171,33 +170,20 @@ class list {
 	if (pos == end())
 	  return (pos);
 	node_pointer node = pos.getNode();
-	iterator tmp = ++pos;
-	if (node->prev)
-	  node->prev->next = node->next;
+	++pos;
+	node->prev->next = node->next;
 	node->next->prev = node->prev;
 	deleteNode_(node);
-	return tmp;
+	return pos;
   }
 
   iterator erase(iterator first, iterator last) {
 
-	if (first == end())
-	  return (first);
-	node_pointer tmp = 0;
-	node_pointer pre_first_node = first.getNode()->prev;
-	node_pointer last_node = last.getNode();
-	if (pre_first_node) {
-	  pre_first_node->next = last_node;
-	  last_node->prev = pre_first_node;
-	} else {
-	  last_node_->next = last_node;
-	}
 	while (first != last) {
-	  tmp = first.getNode();
-	  ++first;
-	  deleteNode_(tmp);
+	  iterator tmp = first++;
+	  erase(tmp);
 	}
-	return last;
+	return first;
   }
 
   void swap(list &x) {
@@ -237,22 +223,73 @@ class list {
   }
 
   void splice(iterator position, list &x, iterator first, iterator last) {
-    if (first == x.end())
+	if (first == x.end())
 	  return;
+
 	node_pointer pos = position.getNode();
-	node_pointer pre_pos = pos->prev;
 	node_pointer first_node = first.getNode();
 	node_pointer last_node = last.getNode()->prev;
-	if (pre_pos) {
-	  pre_pos->next = first_node;
-	  first_node->prev = pre_pos;
-	} else {
-	  last_node_->next = first_node;
-	  first_node->prev = 0;
-	}
-	last_node->next = pos;
-	pos->prev = last_node;
+
 	x.detachNodes_(first, last);
+
+	pos->prev->next = first_node;
+	first_node->prev = pos->prev;
+	pos->prev = last_node;
+	last_node->next = pos;
+  }
+
+  void remove(const value_type &val) {
+
+	iterator itBegin = begin();
+	iterator itEnd = end();
+	while (itBegin != itEnd) {
+	  if (val == *itBegin) {
+		iterator tmp = itBegin++;
+		erase(tmp);
+	  } else {
+		++itBegin;
+	  }
+	}
+  }
+
+  template<class Predicate>
+  void remove_if(Predicate pred) {
+	iterator itBegin = begin();
+	iterator itEnd = end();
+	while (itBegin != itEnd) {
+	  if (pred(itBegin)) {
+		iterator tmp = itBegin++;
+		erase(tmp);
+	  } else {
+		++itBegin;
+	  }
+	}
+  }
+
+  template<class BinaryPredicate>
+  void unique(BinaryPredicate binary_pred) {
+	iterator itBegin = begin();
+	iterator itEnd = end();
+
+	while (itBegin != itEnd) {
+	  iterator tmp = itBegin++;
+	  if (binary_pred(tmp, itBegin))
+		erase(tmp);
+	}
+  }
+
+  void unique() { unique(_compareNodes()); }
+
+  void merge (list& x) {
+    iterator it1 = begin();
+    iterator it2 = x.begin();
+    node_pointer new_list = *it1 < *it2 ? it1.getNode()++ : it2.getNode()++;
+    while (it1 != end() || it2 != x.end()) {
+      if (*it1 < *it2) {
+
+      }
+    }
+
   }
 
  private:
@@ -268,22 +305,25 @@ class list {
 	return newNode;
   }
 
+  void insertNode_(iterator pos, node_pointer node) {
+
+  }
+
   void deleteNode_(node_pointer node) {
 	allocator_.destroy(node);
 	allocator_.deallocate(node, 1);
   }
 
   void detachNodes_(iterator first, iterator last) {
+
 	node_pointer first_node = first.getNode();
 	node_pointer last_node = last.getNode();
-	if (first == begin()) {
-	  last_node_->next = last_node;
-	  last_node->prev = 0;
-	} else {
-	  first_node->prev->next = last_node;
-	  last_node->prev = first_node->prev;
-	}
+
+	last_node->prev = first_node->prev;
+	first_node->prev->next = last_node;
   }
+
+  bool _compareNodes(iterator x, iterator y) { return x == y; }
 
   /**
    * @brief Initialization blank list container. Needed to avoid duplication
