@@ -257,7 +257,7 @@ class list {
 	iterator itBegin = begin();
 	iterator itEnd = end();
 	while (itBegin != itEnd) {
-	  if (pred(itBegin)) {
+	  if (pred(*itBegin)) {
 		iterator tmp = itBegin++;
 		erase(tmp);
 	  } else {
@@ -273,23 +273,39 @@ class list {
 
 	while (itBegin != itEnd) {
 	  iterator tmp = itBegin++;
-	  if (binary_pred(tmp, itBegin))
+	  if (binary_pred(*tmp, *itBegin))
 		erase(tmp);
 	}
   }
 
-  void unique() { unique(_compareNodes()); }
+  void unique() { unique(_isEqual()); }
 
-  void merge (list& x) {
-    iterator it1 = begin();
-    iterator it2 = x.begin();
-    node_pointer new_list = *it1 < *it2 ? it1.getNode()++ : it2.getNode()++;
-    while (it1 != end() || it2 != x.end()) {
-      if (*it1 < *it2) {
+  void merge(list &x) {
+	merge(x, _isFirstLess());
+  }
 
-      }
-    }
+  template <class Compare>
+  void merge (list& x, Compare comp) {
+	iterator it1 = begin();
+	iterator it2 = x.begin();
+	iterator itNewList(*it1 < *it2 ? it1.getNode()++ : it2.getNode()++);
+	iterator saveBegin(itNewList);
 
+	while (it1 != end() && it2 != x.end()) {
+	  if (comp(*it1, *it2)) {
+		insertAfter_(itNewList++, it1++);
+	  } else {
+		insertAfter_(itNewList++, it2++);
+	  }
+	}
+	while (it1 != end()) {
+	  insertAfter_(itNewList++, it1++);
+	}
+	while (it2 != end()) {
+	  insertAfter_(itNewList++, it2++);
+	}
+	insertAfter_(end(), saveBegin);
+	x.detachNodes_(begin(), end());
   }
 
  private:
@@ -303,10 +319,6 @@ class list {
 	newNode->prev = prev;
 	newNode->next = next;
 	return newNode;
-  }
-
-  void insertNode_(iterator pos, node_pointer node) {
-
   }
 
   void deleteNode_(node_pointer node) {
@@ -323,7 +335,8 @@ class list {
 	first_node->prev->next = last_node;
   }
 
-  bool _compareNodes(iterator x, iterator y) { return x == y; }
+  bool _isEqual(iterator x, iterator y) { return x == y; }
+  bool _isFirstLess(const T &x, const T &y) { return x < y; }
 
   /**
    * @brief Initialization blank list container. Needed to avoid duplication
@@ -333,6 +346,13 @@ class list {
 	last_node_ = createNode_(0);
 	last_node_->next = last_node_;
 	last_node_->prev = last_node_;
+  }
+
+  void insertAfter_(iterator pos, iterator val) {
+	node_pointer posNode = pos.getNode();
+	node_pointer valNode = val.getNode();
+	posNode->next = valNode;
+	valNode->prev = posNode;
   }
 
   node_pointer last_node_;

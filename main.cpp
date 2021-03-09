@@ -9,6 +9,8 @@ bool single_digit (const int& value) { return (value<10); }
 
 bool binary_pred1(const int &x, const int &y) { return x == y; }
 
+bool compare(int x, int y) { return x > y; }
+
 template<typename List>
 void print_list(const List &x) {
   auto itBegin = x.begin();
@@ -159,6 +161,35 @@ int main() {
 
   title("Merge");
 
+  a.clear();
+  b.clear();
+  for (int i = 1; i < 20; ++i) {
+    if (i % 2 || i < 10) {
+      a.push_back(i);
+    } else {
+      b.push_back(i);
+    }
+  }
+  print_list(a);
+  print_list(b);
+  a.merge(b);
+  print_list(a);
+  print_list(b);
+
+  a.clear();
+  b.clear();
+  for (int i = 20; i > 0; --i) {
+	if (i % 2 || i < 10) {
+	  a.push_back(i);
+	} else {
+	  b.push_back(i);
+	}
+  }
+  print_list(a);
+  print_list(b);
+  a.merge(b, compare);
+  print_list(a);
+  print_list(b);
 
   return 0;
 }
