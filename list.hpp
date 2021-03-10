@@ -308,10 +308,64 @@ class list {
 	x.detachNodes_(begin(), end());
   }
 
+  template <class Compare>
+  void sort (Compare comp) {
+	sortList_(this->begin().getNode(), comp);
+  }
+  void sort() {
+    sort(_isFirstLess());
+  }
+
  private:
   typedef ListNode<value_type> node_type;
   typedef typename std::allocator<T>::template rebind<node_type>::other node_allocator;
   typedef node_type *node_pointer;
+
+  template <class Compare>
+  void sortList_(node_pointer *list, Compare comp) {
+	node_pointer head = *list;
+	node_pointer a = last_node_;
+	node_pointer b = last_node_;
+	if (head == last_node_ || head->next == last_node_) {
+	  return;
+	}
+	halveList_(head, &a, &b, comp);
+	mergeSort_(&a);
+	mergeSort_(&b);
+	*list = mergeLists_(a, b);
+  }
+
+  template <class Compare>
+  node_pointer mergeLists_(node_pointer a, node_pointer b, Compare comp) {
+    node_pointer result = 0;
+    if (a == last_node_) return b;
+    if (b == last_node_) return a;
+    if (comp(a->data, b->data)) {
+      result = a;
+      result->next = mergeLists_(a, b->next);
+    } else {
+      result = b;
+      result->next = mergeLists_(a, b->next);
+    }
+    return result;
+  }
+
+  void halveList_(node_pointer list, node_pointer *a, node_pointer *b) {
+    node_pointer current = list;
+    size_type len = size();
+    if (len < 2) {
+      *a = current;
+      *b = last_node_;
+    } else {
+      size_type halve = (len - 1) / 2;
+      for (int i = 0; i < halve; ++i) {
+        current = current->next;
+      }
+      *a = list;
+      *b = current->next;
+      current->next = last_node_;
+    }
+  }
 
   node_pointer createNode_(const_reference data, node_pointer prev = 0, node_pointer next = 0) {
 	node_pointer newNode = allocator_.allocate(1);

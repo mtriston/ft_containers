@@ -1,6 +1,8 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <cstdlib>
+#include <ctime>
 #include <memory>
 #include "list.hpp"
 #include <list>
@@ -191,5 +193,14 @@ int main() {
   print_list(a);
   print_list(b);
 
+  title("Sort");
+
+  a.clear();
+  std::srand(time(NULL));
+  for (int i = 0; i < 20; ++i)
+    a.push_back(std::rand() % 100);
+  print_list(a);
+  a.sort();
+  print_list(a);
   return 0;
 }
