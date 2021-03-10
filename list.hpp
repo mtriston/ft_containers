@@ -46,8 +46,8 @@ class list {
   typedef typename allocator_type::const_pointer const_pointer;
   typedef ft::List_iterator<T> iterator;
   typedef ft::List_const_iterator<T> const_iterator;
-  //reverse_iterator
-  //const_reverse_iterator
+  typedef ft::reverse_iterator<iterator> reverse_iterator;
+  typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
   explicit list(const allocator_type &alloc = allocator_type()) {
 	initBlankList_(alloc);
@@ -91,10 +91,10 @@ class list {
   iterator end() { return iterator(last_node_); }
 
   const_iterator end() const { return const_iterator(last_node_); }
-//  reverse_iterator rbegin();
-//  const_reverse_iterator rbegin() const;
-//  reverse_iterator rend();
-//  const_reverse_iterator rend() const;
+  reverse_iterator rbegin() { return reverse_iterator(end());}
+  const_reverse_iterator rbegin() const { return const_reverse_iterator(end());}
+  reverse_iterator rend() { return reverse_iterator(begin()); }
+  const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
 
   /* Capacity */
 
@@ -316,6 +316,13 @@ class list {
     sort(_isFirstLess());
   }
 
+  void reverse() {
+    node_pointer head;
+    iterator itBegin = begin();
+    iterator itEnd = end();
+
+  }
+
  private:
   typedef ListNode<value_type> node_type;
   typedef typename std::allocator<T>::template rebind<node_type>::other node_allocator;
@@ -343,10 +350,12 @@ class list {
     if (comp(a->data, b->data)) {
       result = a;
       result->next = mergeLists_(a, b->next);
+      result->next->prev = result;
     } else {
       result = b;
       result->next = mergeLists_(a, b->next);
-    }
+	  result->next->prev = result;
+	}
     return result;
   }
 
@@ -364,6 +373,8 @@ class list {
       *a = list;
       *b = current->next;
       current->next = last_node_;
+	  (*a)->prev = last_node_;
+	  (*b)->prev = last_node_;
     }
   }
 

@@ -11,6 +11,8 @@ bool single_digit (const int& value) { return (value<10); }
 
 bool binary_pred1(const int &x, const int &y) { return x == y; }
 
+bool is_big(const int &x, const int &y) { return x >= y; }
+
 bool compare(int x, int y) { return x > y; }
 
 template<typename List>
@@ -36,12 +38,12 @@ int main() {
 
   title("Test constructors and assignment operator");
 
-  std::list<int> a;
+  ft::list<int> a;
   for (int i = 0; i <= 10; ++i) {
 	a.push_back(i);
 	a.push_front(i);
   }
-  std::list<int> b(a);
+  ft::list<int> b(a);
   for (int i = 0; i <= 5; ++i) {
 	b.pop_back();
 	b.pop_front();
@@ -201,6 +203,8 @@ int main() {
     a.push_back(std::rand() % 100);
   print_list(a);
   a.sort();
+  print_list(a);
+  a.sort(is_big);
   print_list(a);
   return 0;
 }
