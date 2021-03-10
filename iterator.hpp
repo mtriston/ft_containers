@@ -6,6 +6,7 @@
 #define FT_CONTAINERS_ITERATOR_HPP
 #include <cstddef> // size_t, ptrdiff_t
 #include <memory> // allocator
+#include <typeinfo>
 
 namespace ft {
 
@@ -64,55 +65,93 @@ class reverse_iterator : public iterator<
   Iterator current;
 
  public:
+  typedef reverse_iterator<Iterator> Self;
   typedef Iterator iterator_type;
   typedef typename iterator_traits<Iterator>::value_type value_type;
   typedef typename iterator_traits<Iterator>::difference_type difference_type;
   typedef typename iterator_traits<Iterator>::pointer pointer;
   typedef typename iterator_traits<Iterator>::reference reference;
 
-  reverse_iterator() : current() {}
+  reverse_iterator() : current(Iterator()) {}
   explicit reverse_iterator(iterator_type const &other) : current(other) {}
   reverse_iterator(const reverse_iterator &other) : current(other.current) {}
   template<class It>
   reverse_iterator(const reverse_iterator<It> &other) : current(other.base()) {}
+  reverse_iterator &operator=(reverse_iterator const &other) {
+	if (this != &other)
+	  current = other.current;
+	return *this;
+  }
 
   iterator_type base() const { return current; };
+  reference operator*() const {
+	Iterator tmp = current;
+	return *(--tmp);
+  }
 
+  pointer operator->() const { return &(operator*()); }
+  bool operator==(reverse_iterator const &rhs) { return base() == rhs.base(); }
+  bool operator!=(reverse_iterator const &rhs) { return !(*this == rhs); }
 
+  Self operator++(int) {
+	Self tmp = *this;
+	this->operator--();
+	return tmp;
+  }
+
+  Self &operator++() {
+	--current;
+	return *this;
+  }
+
+  Self operator--(int) {
+	Self tmp = *this;
+	this->operator++();
+	return tmp;
+  }
+
+  Self &operator--() {
+	++current;
+	return *this;
+  }
 };
 
+
 template<typename InputIt, typename Distance>
-static void do_advance(InputIt &it, Distance n, ft::random_access_iterator_tag) {
-  it += n;
+static void random_access_advance(InputIt &it, Distance n) {
+  //it += n;
 }
 
 template<typename InputIt, typename Distance>
-static void do_advance(InputIt &it, Distance n, ...) {
+static void bidirectional_advance(InputIt &it, Distance n) {
   for (Distance k = 0; k != n; ++k, ++it);
 }
 
 template<typename InputIt, typename Distance>
 void advance(InputIt &it, Distance n) {
-  ft::do_advance(it, n, typename ft::iterator_traits<InputIt>::iterator_category());
+  if (typeid(typename ft::iterator_traits<InputIt>::iterator_category) == typeid(ft::random_access_iterator_tag()))
+	return ft::random_access_advance(it, n);
+  return ft::bidirectional_advance(it, n);
 }
 
 template<typename InputIt>
-static typename ft::iterator_traits<InputIt>::difference_type do_distance(InputIt first,
-																   InputIt last,
-																   ft::random_access_iterator_tag) {
-  return (last - first);
+static typename ft::iterator_traits<InputIt>::difference_type random_access_distance(InputIt first, InputIt last) {
+  //return (last - first);
+  return (0);
 }
 
 template<typename InputIt>
-static typename ft::iterator_traits<InputIt>::difference_type do_distance(InputIt first, InputIt last, ...) {
+static typename ft::iterator_traits<InputIt>::difference_type bidirectional_distance(InputIt first, InputIt last) {
   size_t i = 0;
-  	for (; first != last; ++first, ++i);
+  for (; first != last; ++first, ++i);
   return i;
 }
 
 template<typename InputIt>
 typename ft::iterator_traits<InputIt>::difference_type distance(InputIt first, InputIt last) {
-  return ft::do_distance(first, last, typename ft::iterator_traits<InputIt>::iterator_category());
+  if (typeid(typename ft::iterator_traits<InputIt>::iterator_category) == typeid(ft::random_access_iterator_tag()))
+	return ft::random_access_distance(first, last);
+  return ft::bidirectional_distance(first, last);
 }
 
 }
