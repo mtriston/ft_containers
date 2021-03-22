@@ -11,7 +11,7 @@
 namespace ft {
 
 template<class T>
-struct Allocator {
+struct allocator {
   typedef T value_type;
   typedef T *pointer;
   typedef const T *const_pointer;
@@ -19,16 +19,22 @@ struct Allocator {
   typedef const T &const_reference;
   typedef std::size_t size_type;
   typedef std::ptrdiff_t difference_type;
-  template< class U > struct rebind { typedef ft::Allocator<U> other; };
+  template< class U > struct rebind { typedef ft::allocator<U> other; };
 
-  Allocator() {}
-  Allocator(const Allocator<T> &other) {}
-  ~Allocator() {}
-  Allocator<T> &operator=(const Allocator<T> &other) {}
+  allocator() {}
+  allocator(const allocator &other) {
+
+  }
+  ~allocator() {}
+
+  allocator &operator=(const allocator &other) {
+	(void)other;
+	return *this;
+  }
 
   pointer address(reference x) const { return &x; }
 
-  pointer allocate(size_type n, const void *hint = 0) {
+  pointer allocate(size_type n) {
 	return static_cast<pointer>(operator new(n * sizeof(value_type)));
   }
 

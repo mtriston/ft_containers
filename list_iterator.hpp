@@ -30,7 +30,8 @@ class List_iterator {
   ~List_iterator() {}
   List_iterator(List_iterator const &other) : _node(other._node) {}
   List_iterator &operator=(List_iterator const &other) {
-	_node(other._node);
+    if (this != &other)
+		_node = other._node;
 	return (*this);
   }
 
