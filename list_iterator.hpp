@@ -12,9 +12,9 @@ template<typename T>
 struct ListNode;
 //TODO: https://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-html-USERS-4.2/stl__list_8h-source.html check iterator's methods
 template<typename T>
-class List_iterator {
+class list_iterator {
  private:
-  typedef List_iterator<T> Self;
+  typedef list_iterator<T> Self;
   typedef ListNode<T> Node;
 
   Node *_node;
@@ -26,10 +26,10 @@ class List_iterator {
   typedef T &reference;
   typedef ft::bidirectional_iterator_tag iterator_category;
 
-  explicit List_iterator(Node *node = 0) : _node(node) {}
-  ~List_iterator() {}
-  List_iterator(List_iterator const &other) : _node(other._node) {}
-  List_iterator &operator=(List_iterator const &other) {
+  explicit list_iterator(Node *node = 0) : _node(node) {}
+  ~list_iterator() {}
+  list_iterator(list_iterator const &other) : _node(other._node) {}
+  list_iterator &operator=(list_iterator const &other) {
     if (this != &other)
 		_node = other._node;
 	return (*this);
@@ -39,8 +39,8 @@ class List_iterator {
 
   reference operator*() const { return _node->data; }
   pointer operator->() const { return &(_node->data); }
-  bool operator==(List_iterator const &rhs) { return this->_node == rhs._node; }
-  bool operator!=(List_iterator const &rhs) { return this->_node != rhs._node; }
+  bool operator==(list_iterator const &rhs) { return this->_node == rhs._node; }
+  bool operator!=(list_iterator const &rhs) { return this->_node != rhs._node; }
 
   Self operator++(int) {
 	Self tmp = *this;
@@ -71,7 +71,7 @@ class List_const_iterator {
  private:
   typedef List_const_iterator<T> Self;
   typedef ListNode<T> Node;
-  typedef List_iterator<T> iterator;
+  typedef list_iterator<T> iterator;
 
   Node *_node;
 
