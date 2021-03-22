@@ -5,11 +5,122 @@
 #ifndef FT_CONTAINERS_LIST_HPP
 #define FT_CONTAINERS_LIST_HPP
 
-#include "list_iterator.hpp"
 #include "allocator.hpp"
+#include "iterator.hpp"
 #include "utils.hpp"
 
 namespace ft {
+
+template<typename T>
+struct ListNode;
+template<typename T>
+class list_iterator {
+ private:
+  typedef list_iterator<T> Self;
+  typedef ListNode<T> Node;
+
+  Node *_node;
+
+ public:
+  typedef std::ptrdiff_t difference_type;
+  typedef T value_type;
+  typedef T *pointer;
+  typedef T &reference;
+  typedef ft::bidirectional_iterator_tag iterator_category;
+
+  explicit list_iterator(Node *node = 0) : _node(node) {}
+  ~list_iterator() {}
+  list_iterator(list_iterator const &other) : _node(other._node) {}
+  list_iterator &operator=(list_iterator const &other) {
+	if (this != &other)
+	  _node = other._node;
+	return (*this);
+  }
+
+  Node *getNode() { return _node; }
+
+  reference operator*() const { return _node->data; }
+  pointer operator->() const { return &(_node->data); }
+  bool operator==(list_iterator const &rhs) { return this->_node == rhs._node; }
+  bool operator!=(list_iterator const &rhs) { return this->_node != rhs._node; }
+
+  Self operator++(int) {
+	Self tmp = *this;
+	this->operator++();
+	return tmp;
+  }
+
+  Self &operator++() {
+	_node = _node->next;
+	return *this;
+  }
+
+  Self operator--(int) {
+	Self tmp = *this;
+	this->operator--();
+	return tmp;
+  }
+
+  Self &operator--() {
+	_node = _node->prev;
+	return *this;
+  }
+};
+
+template<typename T>
+class list_const_iterator {
+
+ private:
+  typedef list_const_iterator<T> Self;
+  typedef ListNode<T> Node;
+  typedef list_iterator<T> iterator;
+
+  Node *_node;
+
+ public:
+  typedef std::ptrdiff_t difference_type;
+  typedef const T value_type;
+  typedef const T *pointer;
+  typedef const T &reference;
+  typedef ft::bidirectional_iterator_tag iterator_category;
+
+  explicit list_const_iterator(Node *node = 0) : _node(node) {}
+  ~list_const_iterator() {}
+  list_const_iterator(iterator const &other) : _node(other._node) {}
+  list_const_iterator &operator=(list_const_iterator const &other) {
+	_node(other._node);
+	return (*this);
+  }
+
+  Node getNode() { return _node; }
+
+  reference operator*() const { return _node->data; }
+  pointer operator->() const { return &(_node->data); }
+  bool operator==(list_const_iterator const &rhs) { return this->_node == rhs._node; }
+  bool operator!=(list_const_iterator const &rhs) { return this->_node != rhs._node; }
+
+  Self operator++(int) {
+	Self tmp = *this;
+	this->operator++();
+	return tmp;
+  }
+
+  Self &operator++() {
+	_node = _node->next;
+	return *this;
+  }
+
+  Self operator--(int) {
+	Self tmp = *this;
+	this->operator--();
+	return tmp;
+  }
+
+  Self &operator--() {
+	_node = _node->prev;
+	return *this;
+  }
+};
 
 template<typename T>
 struct ListNode {
@@ -22,14 +133,20 @@ struct ListNode {
 
   ListNode(const ListNode<T> &other) : data(other.data), next(other.next), prev(other.prev) {}
 
-  ~ListNode() {}
+  ListNode<T> &operator=(const ListNode<T> &other) {
+	if (this != &other) {
+		data = other.data;
+		next = other.next;
+		prev = other.prev;
+	}
+	return *this;
+  }
+	~ListNode() {}
 
   value_type data;
   ListNode<T> *next;
   ListNode<T> *prev;
 
- private:
-  ListNode<T> &operator=(const ListNode<T> &other) {}
 };
 
 template<typename T, typename Allocator = ft::allocator<T> >
@@ -45,11 +162,12 @@ class list {
   typedef typename allocator_type::pointer pointer;
   typedef typename allocator_type::const_pointer const_pointer;
   typedef ft::list_iterator<T> iterator;
-  typedef ft::List_const_iterator<T> const_iterator;
+  typedef ft::list_const_iterator<T> const_iterator;
   typedef ft::reverse_iterator<iterator> reverse_iterator;
   typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
   explicit list(const allocator_type &alloc = allocator_type()) {
+	(void)alloc;
 	initBlankList_();
   }
 

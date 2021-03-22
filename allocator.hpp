@@ -23,7 +23,7 @@ struct allocator {
 
   allocator() {}
   allocator(const allocator &other) {
-
+	(void)other;
   }
   ~allocator() {}
 
