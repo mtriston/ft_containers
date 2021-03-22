@@ -5,9 +5,9 @@
 #ifndef FT_CONTAINERS_LIST_HPP
 #define FT_CONTAINERS_LIST_HPP
 
-#include "List_iterator.hpp"
-#include "Allocator.hpp"
-#include <memory>
+#include "list_iterator.hpp"
+#include "allocator.hpp"
+#include "utils.hpp"
 
 namespace ft {
 
@@ -32,7 +32,7 @@ struct ListNode {
   ListNode<T> &operator=(const ListNode<T> &other) {}
 };
 
-template<typename T, typename Allocator = std::allocator<T> >
+template<typename T, typename Allocator = ft::allocator<T> >
 class list {
 
  public:
@@ -44,13 +44,13 @@ class list {
   typedef typename allocator_type::const_reference const_reference;
   typedef typename allocator_type::pointer pointer;
   typedef typename allocator_type::const_pointer const_pointer;
-  typedef ft::List_iterator<T> iterator;
+  typedef ft::list_iterator<T> iterator;
   typedef ft::List_const_iterator<T> const_iterator;
   typedef ft::reverse_iterator<iterator> reverse_iterator;
   typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
   explicit list(const allocator_type &alloc = allocator_type()) {
-	initBlankList_(alloc);
+	initBlankList_();
   }
 
   explicit list(size_type n, const value_type &val = value_type(),
@@ -66,13 +66,13 @@ class list {
   }
 
   list(list const &x) {
-	initBlankList_(allocator_type(x.allocator_));
+	initBlankList_();
 	insert(end(), x.begin(), x.end());
   }
 
   ~list() {
 	clear();
-	deleteNode_(last_node_);
+	deleteNode_(_root_node);
   }
 
   list &operator=(list const &x) {
@@ -84,35 +84,43 @@ class list {
 
   /* Iterators */
 
-  iterator begin() { return iterator(last_node_->next); }
+  iterator begin() { return iterator(_root_node->next); }
 
-  const_iterator begin() const { return const_iterator(last_node_->next); }
+  const_iterator begin() const { return const_iterator(_root_node->next); }
 
-  iterator end() { return iterator(last_node_); }
+  iterator end() { return iterator(_root_node); }
 
-  const_iterator end() const { return const_iterator(last_node_); }
-  reverse_iterator rbegin() { return reverse_iterator(end());}
-  const_reverse_iterator rbegin() const { return const_reverse_iterator(end());}
+  const_iterator end() const { return const_iterator(_root_node); }
+  reverse_iterator rbegin() { return reverse_iterator(end()); }
+  const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
   reverse_iterator rend() { return reverse_iterator(begin()); }
   const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
 
   /* Capacity */
 
-  bool empty() const { return last_node_ == last_node_->next; }
+  bool empty() const { return _root_node == _root_node->next; }
 
-  size_type size() const { return ft::distance(begin(), end()); }
+  size_type size() const {
+	node_pointer ptr = _root_node->next;
+	size_type i = 0;
+	while (ptr != _root_node) {
+	  ++i;
+	  ptr = ptr->next;
+	}
+	return i;
+  }
 
   size_type max_size() const { return allocator_.max_size(); }
 
   /* Element access */
 
-  reference front() { return last_node_->next->data; }
+  reference front() { return _root_node->next->data; }
 
-  const_reference front() const { return last_node_->next->data; }
+  const_reference front() const { return _root_node->next->data; }
 
-  reference back() { return last_node_->prev->data; }
+  reference back() { return _root_node->prev->data; }
 
-  const_reference back() const { return last_node_->prev->data; }
+  const_reference back() const { return _root_node->prev->data; }
 
   /* Modifiers */
 
@@ -188,13 +196,13 @@ class list {
 
   void swap(list &x) {
 
-	node_pointer tmp_node = last_node_;
-	allocator_type tmp_allocator = allocator_;
+	node_pointer tmp_node = _root_node;
+	node_allocator tmp_allocator = allocator_;
 
-	last_node_ = x.last_node_;
+	_root_node = x._root_node;
 	allocator_ = x.allocator_;
 
-	x.last_node_ = tmp_node;
+	x._root_node = tmp_node;
 	x.allocator_ = tmp_allocator;
   }
 
@@ -272,110 +280,122 @@ class list {
 	iterator itEnd = end();
 
 	while (itBegin != itEnd) {
-	  iterator tmp = itBegin++;
+	  iterator tmp = itBegin;
+	  ++itBegin;
 	  if (binary_pred(*tmp, *itBegin))
 		erase(tmp);
 	}
   }
 
-  void unique() { unique(_isEqual()); }
+  void unique() { unique(ft::equal_to<T>()); }
 
-  void merge(list &x) {
-	merge(x, _isFirstLess());
-  }
+  void merge(list &x) { merge(x, ft::less<T>()); }
 
-  template <class Compare>
-  void merge (list& x, Compare comp) {
+  template<class Compare>
+  void merge(list &x, Compare comp) {
+    if (x.empty())
+	  return;
 	iterator it1 = begin();
 	iterator it2 = x.begin();
-	iterator itNewList(*it1 < *it2 ? it1.getNode()++ : it2.getNode()++);
-	iterator saveBegin(itNewList);
-
-	while (it1 != end() && it2 != x.end()) {
+	iterator mergedList(this->end());
+	x.detachNodes_(x.begin(), x.end());
+	while (it1 != this->end() && it2 != x.end()) {
 	  if (comp(*it1, *it2)) {
-		insertAfter_(itNewList++, it1++);
+		insertAfter_(mergedList, it1);
+		++it1;
 	  } else {
-		insertAfter_(itNewList++, it2++);
+		insertAfter_(mergedList, it2);
+		++it2;
 	  }
+	  ++mergedList;
 	}
-	while (it1 != end()) {
-	  insertAfter_(itNewList++, it1++);
+	while (it1 != this->end()) {
+	  insertAfter_(mergedList, it1);
+	  ++it1;
+	  ++mergedList;
 	}
-	while (it2 != end()) {
-	  insertAfter_(itNewList++, it2++);
+	while (it2 != x.end()) {
+	  insertAfter_(mergedList, it2);
+	  ++it2;
+	  ++mergedList;
 	}
-	insertAfter_(end(), saveBegin);
-	x.detachNodes_(begin(), end());
+	insertAfter_(mergedList, end());
   }
 
-  template <class Compare>
-  void sort (Compare comp) {
-	sortList_(this->begin().getNode(), comp);
+  template<class Compare>
+  void sort(Compare comp) {
+	_root_node->next = sortList_(_root_node->next, comp);
+	node_pointer begin = _root_node->next;
+	node_pointer prev;
+	while (begin != _root_node) {
+	  prev = begin;
+	  begin = begin->next;
+	}
+	_root_node->prev = prev;
   }
-  void sort() {
-    sort(_isFirstLess());
-  }
+
+  void sort() { sort(ft::less<T>()); }
 
   void reverse() {
-    node_pointer head;
-    iterator itBegin = begin();
-    iterator itEnd = end();
-
+	node_pointer prev = _root_node;
+	node_pointer curr = _root_node->next;
+	node_pointer next = curr->next;
+	while (next != _root_node) {
+	  curr->next = prev;
+	  prev->prev = curr;
+	  prev = curr;
+	  curr = next;
+	  next = curr->next;
+	}
+	curr->next = prev;
+	prev->prev = curr;
+	_root_node->next = curr;
+	curr->prev = _root_node;
   }
 
  private:
   typedef ListNode<value_type> node_type;
-  typedef typename std::allocator<T>::template rebind<node_type>::other node_allocator;
+  typedef typename allocator_type::template rebind<node_type>::other node_allocator;
   typedef node_type *node_pointer;
 
-  template <class Compare>
-  void sortList_(node_pointer *list, Compare comp) {
-	node_pointer head = *list;
-	node_pointer a = last_node_;
-	node_pointer b = last_node_;
-	if (head == last_node_ || head->next == last_node_) {
-	  return;
+  template<class Compare>
+  node_pointer sortList_(node_pointer head, Compare comp) {
+	if (head == _root_node || head->next == _root_node) {
+	  return head;
 	}
-	halveList_(head, &a, &b, comp);
-	mergeSort_(&a);
-	mergeSort_(&b);
-	*list = mergeLists_(a, b);
+	node_pointer second = halveList_(head);
+	head = sortList_(head, comp);
+	second = sortList_(second, comp);
+	return mergeLists_(head, second, comp);
   }
 
-  template <class Compare>
+  template<class Compare>
   node_pointer mergeLists_(node_pointer a, node_pointer b, Compare comp) {
-    node_pointer result = 0;
-    if (a == last_node_) return b;
-    if (b == last_node_) return a;
-    if (comp(a->data, b->data)) {
-      result = a;
-      result->next = mergeLists_(a, b->next);
-      result->next->prev = result;
-    } else {
-      result = b;
-      result->next = mergeLists_(a, b->next);
-	  result->next->prev = result;
+	if (a == _root_node) return b;
+	if (b == _root_node) return a;
+	if (comp(a->data, b->data)) {
+	  a->next = mergeLists_(a->next, b, comp);
+	  a->next->prev = a;
+	  a->prev = _root_node;
+	  return a;
+	} else {
+	  b->next = mergeLists_(a, b->next, comp);
+	  b->next->prev = b;
+	  b->prev = _root_node;
+	  return b;
 	}
-    return result;
   }
 
-  void halveList_(node_pointer list, node_pointer *a, node_pointer *b) {
-    node_pointer current = list;
-    size_type len = size();
-    if (len < 2) {
-      *a = current;
-      *b = last_node_;
-    } else {
-      size_type halve = (len - 1) / 2;
-      for (int i = 0; i < halve; ++i) {
-        current = current->next;
-      }
-      *a = list;
-      *b = current->next;
-      current->next = last_node_;
-	  (*a)->prev = last_node_;
-	  (*b)->prev = last_node_;
-    }
+  node_pointer halveList_(node_pointer list) {
+	node_pointer first = list;
+	node_pointer second = list;
+	while (first->next != _root_node && second->next->next != _root_node) {
+	  first = first->next->next;
+	  second = second->next;
+	}
+	node_pointer result = second->next;
+	second->next = _root_node;
+	return result;
   }
 
   node_pointer createNode_(const_reference data, node_pointer prev = 0, node_pointer next = 0) {
@@ -401,16 +421,14 @@ class list {
   }
 
   bool _isEqual(iterator x, iterator y) { return x == y; }
-  bool _isFirstLess(const T &x, const T &y) { return x < y; }
 
   /**
    * @brief Initialization blank list container. Needed to avoid duplication
    */
-  void initBlankList_(const allocator_type &alloc = allocator_type()) {
-	allocator_ = alloc;
-	last_node_ = createNode_(0);
-	last_node_->next = last_node_;
-	last_node_->prev = last_node_;
+  void initBlankList_() {
+	_root_node = createNode_(0);
+	_root_node->next = _root_node;
+	_root_node->prev = _root_node;
   }
 
   void insertAfter_(iterator pos, iterator val) {
@@ -420,9 +438,58 @@ class list {
 	valNode->prev = posNode;
   }
 
-  node_pointer last_node_;
-  std::allocator<node_type> allocator_;
+  node_pointer _root_node;
+  node_allocator allocator_;
 };
+
+template<class T, class Alloc>
+bool operator==(const ft::list<T, Alloc> &lhs, const ft::list<T, Alloc> &rhs) {
+  typename ft::list<T>::const_iterator lBegin = lhs.begin();
+  typename ft::list<T>::const_iterator lEnd = lhs.end();
+  typename ft::list<T>::const_iterator rBegin = rhs.begin();
+  typename ft::list<T>::const_iterator rEnd = rhs.end();
+  while (lBegin != lEnd && rBegin != rEnd) {
+    if (*lBegin != *rBegin)
+	  return false;
+    ++lBegin;
+    ++rBegin;
+  }
+  return (lBegin == lEnd && rBegin == rEnd);
+}
+
+template<class T, class Alloc>
+bool operator!=(const ft::list<T, Alloc> &lhs, const ft::list<T, Alloc> &rhs) {
+  return !(lhs == rhs);
+}
+
+template<class T, class Alloc>
+bool operator<(const ft::list<T, Alloc> &lhs, const ft::list<T, Alloc> &rhs) {
+  typename ft::list<T>::const_iterator lBegin = lhs.begin();
+  typename ft::list<T>::const_iterator lEnd = lhs.end();
+  typename ft::list<T>::const_iterator rBegin = rhs.begin();
+  typename ft::list<T>::const_iterator rEnd = rhs.end();
+  while (lBegin != lEnd && rBegin != rEnd) {
+    if (*lBegin < *rBegin)
+      return true;
+	++lBegin;
+	++rBegin;
+  }
+  return (lBegin == lEnd && rBegin != rEnd);
+}
+template<class T, class Alloc>
+bool operator<=(const ft::list<T, Alloc> &lhs, const ft::list<T, Alloc> &rhs) {
+  return (lhs < rhs || lhs == rhs);
+}
+
+template<class T, class Alloc>
+bool operator>(const ft::list<T, Alloc> &lhs, const ft::list<T, Alloc> &rhs) {
+  return !(lhs <= rhs);
+}
+
+template<class T, class Alloc>
+bool operator>=(const ft::list<T, Alloc> &lhs, const ft::list<T, Alloc> &rhs) {
+  return !(lhs < rhs);
+}
 
 }
 

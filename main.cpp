@@ -3,17 +3,10 @@
 #include <string>
 #include <cstdlib>
 #include <ctime>
-#include <memory>
 #include "list.hpp"
 #include <list>
 
 bool single_digit (const int& value) { return (value<10); }
-
-bool binary_pred1(const int &x, const int &y) { return x == y; }
-
-bool is_big(const int &x, const int &y) { return x >= y; }
-
-bool compare(int x, int y) { return x > y; }
 
 template<typename List>
 void print_list(const List &x) {
@@ -38,12 +31,12 @@ int main() {
 
   title("Test constructors and assignment operator");
 
-  ft::list<int> a;
+  ft::list<double> a;
   for (int i = 0; i <= 10; ++i) {
 	a.push_back(i);
 	a.push_front(i);
   }
-  ft::list<int> b(a);
+  ft::list<double> b(a);
   for (int i = 0; i <= 5; ++i) {
 	b.pop_back();
 	b.pop_front();
@@ -160,14 +153,14 @@ int main() {
   title("Unique");
 
   print_list(a);
-  a.unique(binary_pred1);
+  a.unique();
   print_list(a);
 
   title("Merge");
 
   a.clear();
   b.clear();
-  for (int i = 1; i < 20; ++i) {
+  for (int i = 1; i <= 20; ++i) {
     if (i % 2 || i < 10) {
       a.push_back(i);
     } else {
@@ -182,7 +175,7 @@ int main() {
 
   a.clear();
   b.clear();
-  for (int i = 20; i > 0; --i) {
+  for (int i = 1; i <= 20; ++i) {
 	if (i % 2 || i < 10) {
 	  a.push_back(i);
 	} else {
@@ -191,7 +184,7 @@ int main() {
   }
   print_list(a);
   print_list(b);
-  a.merge(b, compare);
+  a.merge(b, ft::less<int>());
   print_list(a);
   print_list(b);
 
@@ -199,12 +192,60 @@ int main() {
 
   a.clear();
   std::srand(time(NULL));
-  for (int i = 0; i < 20; ++i)
+  for (int i = 0; i < 44; ++i)
     a.push_back(std::rand() % 100);
   print_list(a);
   a.sort();
   print_list(a);
-  a.sort(is_big);
+  a.sort(ft::greater<int>());
   print_list(a);
+
+  title("Reverse");
+  a.reverse();
+  print_list(a);
+
+  title("Relational operators");
+  a.clear();
+  b.clear();
+  for (int i = 0; i < 20; ++i) {
+    a.push_back(i);
+    b.push_back(i);
+  }
+  print_list(a);
+  print_list(b);
+  if (a == b) std::cout << "a and b is equal\n";
+  if (a >= b) std::cout << "a greater or equal to b\n";
+  a.push_back(20);
+  print_list(a);
+  print_list(b);
+  if (a > b) std::cout << "a greater than b\n";
+  if (a >= b) std::cout << "a greater or equal to b\n";
+  if (b < a) std::cout << "b less than a\n";
+  if (b <= a) std::cout << "b less or equal to a\n";
+
+  title("Reverse iterator");
+  auto rBegin = a.rbegin();
+  auto rEnd = a.rend();
+  while (rBegin != rEnd) {
+    std::cout << *rBegin << " ";
+    ++rBegin;
+  }
+  std::cout << std::endl;
+
+  title("Testing blank lists");
+  a.clear();
+  b.clear();
+  a.sort();
+  a.merge(b);
+  b.reverse();
+  a.swap(b);
+  b.erase(b.begin(), b.end());
+  b.splice(b.begin(), a);
+  b.remove(0);
+  b.unique();
+  print_list(a);
+  print_list(b);
+
   return 0;
+  
 }
