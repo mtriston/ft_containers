@@ -28,6 +28,11 @@ template <class T> struct greater : binary_function <T,T,bool> {
   bool operator() (const T& x, const T& y) const {return x>y;}
 };
 
+template< class T >
+const T& max( const T& a, const T& b ) {
+  return a >= b ? a : b;
+}
+
 }
 
 #endif //FT_CONTAINERS__UTILS_HPP_
