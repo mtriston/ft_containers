@@ -41,8 +41,8 @@ class list_iterator {
 
   reference operator*() const { return _node->data; }
   pointer operator->() const { return &(_node->data); }
-  bool operator==(list_iterator const &rhs) { return this->_node == rhs._node; }
-  bool operator!=(list_iterator const &rhs) { return this->_node != rhs._node; }
+  bool operator==(list_iterator const &rhs) const { return this->_node == rhs._node; }
+  bool operator!=(list_iterator const &rhs) const { return this->_node != rhs._node; }
 
   Self operator++(int) {
 	Self tmp = *this;
@@ -173,7 +173,7 @@ class list {
 
   explicit list(size_type n, const value_type &val = value_type(),
 				const allocator_type &alloc = allocator_type()) {
-	initBlankList_(alloc);
+	initBlankList_();
 	insert(end(), n, val);
   }
 
