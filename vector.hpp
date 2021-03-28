@@ -135,14 +135,14 @@ class vector {
   explicit vector(size_type n, const value_type &val = value_type(),
 				  const allocator_type &alloc = allocator_type())
 	  : _start(0), _finish(0), _end_of_storage(0), _allocator(alloc) {
-	_fill_initialize(n, val);
+	insert(n, val);
   }
 
   template<class InputIterator>
   vector(InputIterator first, InputIterator last,
 		 const allocator_type &alloc = allocator_type())
 	  : _start(0), _finish(0), _end_of_storage(0), _allocator(alloc) {
-	_range_initialize(first, last);
+	insert(begin(), first, last);
   }
 
   vector(const vector &x) : _start(0), _finish(0), _end_of_storage(0), _allocator(x._allocator) {
@@ -150,8 +150,8 @@ class vector {
   }
 
   /*Iterators*/
-  iterator begin() { return iterator(_start); }
-  const_iterator begin() const { return const_iterator(_start); }
+  iterator begin() { return _start; }
+  const_iterator begin() const { return _start; }
   iterator end() { return _finish; }
   const_iterator end() const { return _finish; }
   reverse_iterator rbegin() { return _finish; }
@@ -169,8 +169,8 @@ class vector {
 	if (n < size()) {
 	  for (size_type i = n; i < old_size; ++i) {
 		_allocator.destroy(_start + i);
-		//TODO: add update _finish
 	  }
+	  _finish = _start + n;
 	} else {
 	  reserve(n);
 	  for (size_type i = old_size; i < n; ++i) {
@@ -199,22 +199,29 @@ class vector {
 
   /*Element access*/
   reference operator[](size_type n) { return _start[n]; }
+
   const_reference operator[](size_type n) const { return _start[n]; }
+
   reference at(size_type n) {
 	if (n > size()) {
 	  throw std::out_of_range("Attempting to access beyond the bounds of an array");
 	}
 	return _start[n];
   }
+
   const_reference at(size_type n) const {
 	if (n > size()) {
 	  throw std::out_of_range("Attempting to access beyond the bounds of an array");
 	}
 	return _start[n];
   }
+
   reference front() { return *_start; }
+
   const_reference front() const { return *_start; }
+
   reference back() { return empty() ? *_start : _start[size() - 1]; }
+
   const_reference back() const { empty() ? *_start : _start[size() - 1]; }
 
 /*Modifiers*/
@@ -223,52 +230,54 @@ class vector {
 
 //  void assign (size_type n, const value_type& val);
 
-	void push_back (const value_type& val) {
-	  insert(end(), val);
-	}
+  void push_back(const value_type &val) {
+	insert(end(), val);
+  }
 
-//  void pop_back();
+  void pop_back() {
+	if (!empty()) {
+	  --_finish;
+	  _allocator.destroy(_finish);
+	}
+  }
 
   iterator insert(iterator position, const value_type &val) {
 
-    int pos_len = position.base() - _start;
-    if (size() == capacity()) {
-      reserve(size() + 1);
-    }
-    for (int i = size(); i > pos_len; --i) {
-      _allocator.construct(_start + i, *(_start + i - 1));
-    }
-    _allocator.construct(_start + pos_len, val);
-	++_finish;
-    return iterator(_start + pos_len);
+	int pos_len = position.base() - _start;
+	insert(position, 1u, val);
+	return iterator(_start + pos_len);
   }
 
-
-//  void insert(iterator position, size_type n, const value_type &val;
-
-//  template<class InputIterator>
-//  void insert(iterator position, InputIterator first, InputIterator last)
-
-  void _fill_initialize(size_type n, const value_type &value) {
-	_start = _allocator.allocate(n);
-	for (size_type i = 0; i < n; ++i) {
-	  _allocator.construct(_start + n, value);
-	}
-	_finish = _start + n + 1;
-	_end_of_storage = _start + n;
-  }
-
-  template<typename ForwardIterator>
-  void _range_initialize(ForwardIterator first, ForwardIterator last) {
-	size_type n = last - first;
-	size_type i = 0;
-	_start = _allocator.allocate(n);
+  void insert(iterator position, size_type n, const value_type &val) {
+	int pos_index = position.base() - _start;
+	reserve(size() + n);
+	_shift_to_right(pos_index, n);
 	for (int i = 0; i < n; ++i) {
-	  _allocator.construct(_start + i, *first);
+	  _allocator.construct(_start + pos_index + i, val);
+	}
+	_finish += n;
+  }
+
+  template<class InputIterator>
+  void insert(iterator position, InputIterator first, InputIterator last) {
+	if (first == last) return;
+	size_type pos_index = position.base() - _start;
+	size_type len = last - first;
+	reserve(size() + len);
+	_shift_to_right(pos_index, len);
+	for (int i = 0; i < len; ++i) {
+	  _allocator.construct(_start + pos_index + i, (*first));
 	  ++first;
 	}
-	_finish = _start + n + 1;
-	_end_of_storage = _start + n;
+	_finish += len;
+  }
+
+ protected:
+
+  void _shift_to_right(size_type position, size_type length) {
+	for (int i = 0; i < length; ++i) {
+	  _allocator.construct(_start + size() + i, *(_start + position + i));
+	}
   }
 
   size_type _check_len(size_type n) const {
