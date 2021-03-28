@@ -39,10 +39,9 @@ struct allocator {
   }
 
   void deallocate(pointer p, std::size_t n) {
-	for (size_t i = 0; i != n; ++i) {
-	  operator delete (p, p + sizeof(p) * n);
+	  (void)n;
+  	operator delete(p);
 	}
-  }
 
   size_type max_size() const { return std::numeric_limits<size_type>::max() / sizeof(value_type); }
 
