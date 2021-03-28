@@ -95,7 +95,7 @@ class reverse_iterator : public iterator<
 
   Self operator++(int) {
 	Self tmp = *this;
-	this->operator--();
+	this->operator++();
 	return tmp;
   }
 
@@ -106,7 +106,7 @@ class reverse_iterator : public iterator<
 
   Self operator--(int) {
 	Self tmp = *this;
-	this->operator++();
+	this->operator--();
 	return tmp;
   }
 
