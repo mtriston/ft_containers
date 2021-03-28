@@ -4,6 +4,8 @@
 
 #ifndef FT_CONTAINERS__UTILS_HPP_
 #define FT_CONTAINERS__UTILS_HPP_
+#include <string>
+#include <sstream>
 
 namespace ft {
 
@@ -32,6 +34,14 @@ template< class T >
 const T& max( const T& a, const T& b ) {
   return a >= b ? a : b;
 }
+
+inline std::string to_string(int n) {
+	std::stringstream ss;
+	ss << n;
+	std::string str = ss.str();
+	return str;
+}
+
 
 }
 
