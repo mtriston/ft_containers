@@ -6,6 +6,7 @@
 #define FT_CONTAINERS_TEST_HPP
 
 #include "../vector.hpp"
+#include "../map.hpp"
 #include <vector>
 #include <iostream>
 #include <iomanip>
