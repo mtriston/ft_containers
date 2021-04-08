@@ -27,40 +27,34 @@ public:
 
 	void pop() { c.pop_back(); }
 
-protected:
-	container_type c;
-
-};
-
-template<class T, class Container>
-	bool operator==(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
+	friend bool operator==(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
 		return lhs.c == rhs.c;
 	}
 
-template<class T, class Container>
-	bool operator!=(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
+	friend bool operator!=(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
 		return lhs.c != rhs.c;
 	}
 
-template<class T, class Container>
-	bool operator<(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
+	friend bool operator<(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
 		return lhs.c < rhs.c;
 	} 
 
-template<class T, class Container>
-	bool operator<=(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
+	friend bool operator<=(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
 		return lhs.c <= rhs.c;
 	} 
 
-template<class T, class Container>
-	bool operator>(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
+	friend bool operator>(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
 		return lhs.c > rhs.c;
 	} 
 
-template<class T, class Container>
-	bool operator>=(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
+	friend bool operator>=(const ft::stack<T, Container> &lhs, const ft::stack<T, Container> &rhs) {
 		return lhs.c >= rhs.c;
 	} 
+
+protected:
+	container_type c;
+};
+
 }
 
 #endif

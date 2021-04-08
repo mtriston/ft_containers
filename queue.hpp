@@ -31,40 +31,35 @@ public:
 
 	void pop() { c.pop_front(); }
 
+	friend bool operator==(const ft::queue<T, Container> &lhs, const ft::queue<T, Container> &rhs) {
+		return lhs.c == rhs.c;
+	}
+
+	friend bool operator!=(const ft::queue<T, Container> &lhs, const ft::queue<T, Container> &rhs) {
+		return lhs.c != rhs.c;
+	}
+
+	friend bool operator<(const ft::queue<T, Container> &lhs, const ft::queue<T, Container> &rhs) {
+		return lhs.c < rhs.c;
+	} 
+
+	friend bool operator<=(const ft::queue<T, Container> &lhs, const ft::queue<T, Container> &rhs) {
+		return lhs.c <= rhs.c;
+	} 
+
+	friend bool operator>(const ft::queue<T, Container> &lhs, const ft::queue<T, Container> &rhs) {
+		return lhs.c > rhs.c;
+	} 
+
+	friend bool operator>=(const ft::queue<T, Container> &lhs, const ft::queue<T, Container> &rhs) {
+		return lhs.c >= rhs.c;
+	} 
+
 protected:
 	container_type c;
 
 };
 
-template<class T, class Container>
-	bool operator==(const ft::queue<T, Container> &lhs, const ft::queue<T, Container> &rhs) {
-		return lhs.c == rhs.c;
-	}
-
-template<class T, class Container>
-	bool operator!=(const ft::queue<T, Container> &lhs, const ft::queue<T, Container> &rhs) {
-		return lhs.c != rhs.c;
-	}
-
-template<class T, class Container>
-	bool operator<(const ft::queue<T, Container> &lhs, const ft::queue<T, Container> &rhs) {
-		return lhs.c < rhs.c;
-	} 
-
-template<class T, class Container>
-	bool operator<=(const ft::queue<T, Container> &lhs, const ft::queue<T, Container> &rhs) {
-		return lhs.c <= rhs.c;
-	} 
-
-template<class T, class Container>
-	bool operator>(const ft::queue<T, Container> &lhs, const ft::queue<T, Container> &rhs) {
-		return lhs.c > rhs.c;
-	} 
-
-template<class T, class Container>
-	bool operator>=(const ft::queue<T, Container> &lhs, const ft::queue<T, Container> &rhs) {
-		return lhs.c >= rhs.c;
-	} 
 }
 
 #endif
