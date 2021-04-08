@@ -173,6 +173,7 @@ class list {
 
   explicit list(size_type n, const value_type &val = value_type(),
 				const allocator_type &alloc = allocator_type()) {
+	(void)alloc;
 	initBlankList_();
 	insert(end(), n, val);
   }

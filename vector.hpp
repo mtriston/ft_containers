@@ -278,7 +278,7 @@ namespace ft {
 			int pos_index = position.base() - _start;
 			reserve(size() + n);
 			_shift_to_right(pos_index, n);
-			for (int i = 0; i < n; ++i) {
+			for (size_type i = 0; i < n; ++i) {
 				_allocator.construct(_start + pos_index + i, val);
 			}
 			_finish += n;
@@ -291,7 +291,7 @@ namespace ft {
 			size_type len = last - first;
 			reserve(size() + len);
 			_shift_to_right(pos_index, len);
-			for (int i = 0; i < len; ++i) {
+			for (size_type i = 0; i < len; ++i) {
 				_allocator.destroy(_start + pos_index + i);
 				_allocator.construct(_start + pos_index + i, (*first));
 				++first;
@@ -347,7 +347,7 @@ namespace ft {
 
 	protected:
 		void _shift_to_right(size_type position, size_type length) {
-			for (int i = 0; i < length; ++i) {
+			for (size_type i = 0; i < length; ++i) {
 				_allocator.construct(_start + size() + i, *(_start + position + i));
 			}
 		}
