@@ -19,29 +19,32 @@ struct allocator {
   typedef const T &const_reference;
   typedef std::size_t size_type;
   typedef std::ptrdiff_t difference_type;
-  template< class U > struct rebind { typedef ft::allocator<U> other; };
+  template<class U>
+  struct rebind { typedef ft::allocator<U> other; };
 
   allocator() {}
+
   allocator(const allocator &other) {
-	(void)other;
+    (void) other;
   }
+
   ~allocator() {}
 
   allocator &operator=(const allocator &other) {
-	(void)other;
-	return *this;
+    (void) other;
+    return *this;
   }
 
   pointer address(reference x) const { return &x; }
 
   pointer allocate(size_type n) {
-	return static_cast<pointer>(operator new(n * sizeof(value_type)));
+    return static_cast<pointer>(operator new(n * sizeof(value_type)));
   }
 
   void deallocate(pointer p, std::size_t n) {
-	  (void)n;
-  	operator delete(p);
-	}
+    (void) n;
+    operator delete(p);
+  }
 
   size_type max_size() const { return std::numeric_limits<size_type>::max() / sizeof(value_type); }
 

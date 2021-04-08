@@ -55,11 +55,11 @@ class iterator {
 
 template<typename Iterator>
 class reverse_iterator : public iterator<
-	typename iterator_traits<Iterator>::iterator_category,
-	typename iterator_traits<Iterator>::value_type,
-	typename iterator_traits<Iterator>::difference_type,
-	typename iterator_traits<Iterator>::pointer,
-	typename iterator_traits<Iterator>::reference> {
+    typename iterator_traits<Iterator>::iterator_category,
+    typename iterator_traits<Iterator>::value_type,
+    typename iterator_traits<Iterator>::difference_type,
+    typename iterator_traits<Iterator>::pointer,
+    typename iterator_traits<Iterator>::reference> {
 
  protected:
   Iterator current;
@@ -73,46 +73,53 @@ class reverse_iterator : public iterator<
   typedef typename iterator_traits<Iterator>::reference reference;
 
   reverse_iterator() : current(Iterator()) {}
+
   explicit reverse_iterator(iterator_type const &other) : current(other) {}
+
   reverse_iterator(const reverse_iterator &other) : current(other.current) {}
+
   template<class It>
   reverse_iterator(const reverse_iterator<It> &other) : current(other.base()) {}
+
   reverse_iterator &operator=(reverse_iterator const &other) {
-	if (this != &other)
-	  current = other.current;
-	return *this;
+    if (this != &other)
+      current = other.current;
+    return *this;
   }
 
   iterator_type base() const { return current; };
+
   reference operator*() const {
-	Iterator tmp = current;
-	return *(--tmp);
+    Iterator tmp = current;
+    return *(--tmp);
   }
 
   pointer operator->() const { return &(operator*()); }
+
   bool operator==(reverse_iterator const &rhs) { return base() == rhs.base(); }
+
   bool operator!=(reverse_iterator const &rhs) { return !(*this == rhs); }
 
   Self operator++(int) {
-	Self tmp = *this;
-	this->operator++();
-	return tmp;
+    Self tmp = *this;
+    this->operator++();
+    return tmp;
   }
 
   Self &operator++() {
-	--current;
-	return *this;
+    --current;
+    return *this;
   }
 
   Self operator--(int) {
-	Self tmp = *this;
-	this->operator--();
-	return tmp;
+    Self tmp = *this;
+    this->operator--();
+    return tmp;
   }
 
   Self &operator--() {
-	++current;
-	return *this;
+    ++current;
+    return *this;
   }
 };
 
@@ -120,7 +127,6 @@ template<typename InputIt, typename Distance>
 void advance(InputIt &it, Distance n) {
   for (Distance k = 0; k != n; ++k, ++it);
 }
-
 
 template<typename InputIt>
 typename ft::iterator_traits<InputIt>::difference_type distance(InputIt first, InputIt last) {
