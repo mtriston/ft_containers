@@ -9,5 +9,7 @@ void title(std::string s) {
 
 int main() {
 	vector_tests();
+	stack_tests();
+	queue_tests();
 	return 0;
 }
