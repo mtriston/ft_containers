@@ -8,7 +8,7 @@ CFLAGS = -Wall -Wextra -Werror
 
 HEADER = test.hpp
 
-SRC = test.cpp vector_test.cpp stack_test.cpp queue_test.cpp
+SRC = test.cpp vector_test.cpp stack_test.cpp queue_test.cpp map_test.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

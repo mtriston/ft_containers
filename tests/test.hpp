@@ -9,6 +9,7 @@
 #include "map.hpp"
 #include "stack.hpp"
 #include "queue.hpp"
+#include "list.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -19,5 +20,6 @@ void title(std::string s);
 void vector_tests();
 void stack_tests();
 void queue_tests();
+void map_tests();
 
 #endif //FT_CONTAINERS_TEST_HPP
