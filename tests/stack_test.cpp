@@ -3,8 +3,8 @@
 void stack_tests() {
   title("STACK");
 
-  ft::stack<int, ft::vector<int> > a;
-  ft::stack<int> b;
+  std::stack<int> a;
+  std::stack<int> b;
 
   title("Empty");
   std::cout << "a.empty() = " << (a.empty() ? "true" : "false") << std::endl;

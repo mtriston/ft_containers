@@ -3,8 +3,8 @@
 void queue_tests() {
   title("QUEUE");
 
-  ft::queue<int, ft::list<int> > a;
-  ft::queue<int> b;
+  std::queue<int> a;
+  std::queue<int> b;
 
   title("Empty");
   std::cout << "a.empty() = " << (a.empty() ? "true" : "false") << std::endl;

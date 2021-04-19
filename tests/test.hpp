@@ -11,6 +11,12 @@
 #include "queue.hpp"
 #include "list.hpp"
 
+#include <vector>
+#include <map>
+#include <stack>
+#include <queue>
+#include <list>
+
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -22,5 +28,6 @@ void vector_tests();
 void stack_tests();
 void queue_tests();
 void map_tests();
+void list_tests();
 
 #endif //FT_CONTAINERS_TEST_HPP

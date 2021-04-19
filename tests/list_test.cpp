@@ -23,12 +23,12 @@ void list_tests() {
   title("LIST");
   title("Test constructors and assignment operator");
 
-  ft::list<double> a;
+  std::list<double> a;
   for (int i = 0; i <= 10; ++i) {
     a.push_back(i);
     a.push_front(i);
   }
-  ft::list<double> b(a);
+  std::list<double> b(a);
   for (int i = 0; i <= 5; ++i) {
     b.pop_back();
     b.pop_front();
@@ -77,10 +77,10 @@ void list_tests() {
   std::cout << *b.erase(b.begin()) << std::endl;
   print_list(b);
 
-  ft::list<double>::iterator begin = b.begin();
+  std::list<double>::iterator begin = b.begin();
   ft::advance(begin, 5);
   print_list(b);
-  std::cout << *b.erase(begin, b.end()) << std::endl;
+  b.erase(begin, b.end());
   print_list(b);
 
   title("Swap");
@@ -215,8 +215,8 @@ void list_tests() {
   if (b <= a) std::cout << "b less or equal to a\n";
 
   title("Reverse iterator");
-  ft::list<double>::reverse_iterator rBegin = a.rbegin();
-  ft::list<double>::reverse_iterator rEnd = a.rend();
+  std::list<double>::reverse_iterator rBegin = a.rbegin();
+  std::list<double>::reverse_iterator rEnd = a.rend();
   while (rBegin != rEnd) {
     std::cout << *rBegin << " ";
     ++rBegin;

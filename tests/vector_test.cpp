@@ -22,22 +22,22 @@ static void constructors() {
 
   title("Constructors");
 
-  ft::vector<int> a;
+  std::vector<int> a;
   print_vector("Default constructor", a);
 
-  ft::vector<std::string> b(5, "Vector");
+  std::vector<std::string> b(5, "Vector");
   print_vector("Fill constructor", b);
 
-  ft::vector<std::string> c(++b.begin(), b.end());
+  std::vector<std::string> c(++b.begin(), b.end());
   print_vector("Range constructor", c);
 
-  ft::vector<int> d(a.begin(), a.end());
+  std::vector<int> d(a.begin(), a.end());
   print_vector("Range constructor with blank range", d);
 
-  ft::vector<std::string> e(c);
+  std::vector<std::string> e(c);
   print_vector("Copy constructor", e);
 
-  ft::vector<int> f(d);
+  std::vector<int> f(d);
   print_vector("Copy constructor with blank vector", f);
 
   e = b;
@@ -52,23 +52,23 @@ static void iterators() {
 
   title("Iterators");
 
-  ft::vector<int> a;
+  std::vector<int> a;
   for (int i = 0; i <= 10; ++i)
     a.push_back(i);
 
-  const ft::vector<int> b(a);
+  const std::vector<int> b(a);
 
   std::cout << "print with iterator" << "\n";
-  ft::vector<int>::const_iterator it_begin = b.begin();
-  ft::vector<int>::const_iterator it_end = b.end();
+  std::vector<int>::const_iterator it_begin = b.begin();
+  std::vector<int>::const_iterator it_end = b.end();
 
   while (it_begin != it_end) {
     std::cout << *it_begin++ << " ";
   }
   std::cout << "\n";
 
-  ft::vector<int>::const_reverse_iterator it_rbegin = b.rbegin();
-  ft::vector<int>::const_reverse_iterator it_rend = b.rend();
+  std::vector<int>::const_reverse_iterator it_rbegin = b.rbegin();
+  std::vector<int>::const_reverse_iterator it_rend = b.rend();
 
   std::cout << "print with reverse iterator" << "\n";
   while (it_rbegin != it_rend) {
@@ -79,12 +79,12 @@ static void iterators() {
 
 static void capacity() {
   title("Capacity");
-  ft::vector<int> a;
+  std::vector<int> a;
   std::cout << "a.max_size() = " << a.max_size() << "\n";
   print_vector("Blank container 'a'", a);
   a.reserve(10);
   print_vector("Container 'a' after reserve(10)", a);
-  ft::vector<int> b(5u, 666);
+  std::vector<int> b(5u, 666);
   print_vector("Container 'b'", b);
   b.resize(2);
   print_vector("Container 'b' after resize(2)", b);
@@ -98,7 +98,7 @@ static void element_access() {
 
   title("Element access");
 
-  ft::vector<int> a;
+  std::vector<int> a;
   for (int i = 1; i < 10; ++i) {
     std::cout << "capacity: " << a.capacity() << " ";
     a.push_back(i);
@@ -120,11 +120,11 @@ static void element_access() {
 static void modifiers() {
   title("Modifiers");
 
-  ft::vector<int> a(10u, 111);
+  std::vector<int> a(10u, 111);
   print_vector("Vector 'a'", a);
   a.assign(5u, 999);
   print_vector("Vector 'a' after asign(5, 999)", a);
-  ft::vector<int> b;
+  std::vector<int> b;
   b.assign(++a.begin(), a.end());
   print_vector("Vector 'b' after assign(++a.begin(), a.end())", b);
 
@@ -164,8 +164,8 @@ static void modifiers() {
 
 static void relational_operators() {
   title("Relational operators");
-  ft::vector<std::string> a(10, "Vector");
-  ft::vector<std::string> b(a);
+  std::vector<std::string> a(10, "Vector");
+  std::vector<std::string> b(a);
   print_vector("Vector 'a'", a);
   print_vector("Vector 'b'", b);
   std::cout << "a == b is " << (a == b ? "true" : "false") << "\n";

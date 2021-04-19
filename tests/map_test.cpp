@@ -20,19 +20,19 @@ void map_tests() {
 
   title("MAP");
   title("Constructors");
-  ft::map<int, std::string> a;
+  std::map<int, std::string> a;
   for (int i = 0; i < 10; ++i) {
-    a.insert(ft::make_pair(i, "test"));
+    a.insert(std::make_pair(i, "test"));
   }
-  ft::map<int, std::string> b(a);
+  std::map<int, std::string> b(a);
   b.erase(b.begin());
   b = a;
   print(a);
   print(b);
   title("Iterators");
   {
-    ft::map<int, std::string>::iterator b = a.begin();
-    ft::map<int, std::string>::iterator e = a.end();
+    std::map<int, std::string>::iterator b = a.begin();
+    std::map<int, std::string>::iterator e = a.end();
     while (b != e) {
       std::cout << (*b).first << ", " << (*b).second << " ";
       ++b;
@@ -40,8 +40,8 @@ void map_tests() {
     std::cout << std::endl;
   }
   {
-    ft::map<int, std::string>::reverse_iterator b = a.rbegin();
-    ft::map<int, std::string>::reverse_iterator e = a.rend();
+    std::map<int, std::string>::reverse_iterator b = a.rbegin();
+    std::map<int, std::string>::reverse_iterator e = a.rend();
     while (b != e) {
       std::cout << (*b).first << ", " << (*b).second << " ";
       ++b;
@@ -55,7 +55,7 @@ void map_tests() {
 
   title("Element access");
   for (int i = 0; i < 10; ++i) {
-    a.insert(ft::make_pair(i, "value" + std::string(1, i + '0')));
+    a.insert(std::make_pair(i, "value" + std::string(1, i + '0')));
   }
   print(a);
   std::cout << a[0] << std::endl;
@@ -64,9 +64,9 @@ void map_tests() {
   a[20] = "bye";
   print(a);
   title("Insert");
-  std::cout << a.insert(ft::make_pair(13, "New")).second << std::endl;
-  std::cout << a.insert(ft::make_pair(13, "New")).second << std::endl;
-  a.insert(a.begin(), ft::make_pair(13, "New"));
+  std::cout << a.insert(std::make_pair(13, "New")).second << std::endl;
+  std::cout << a.insert(std::make_pair(13, "New")).second << std::endl;
+  a.insert(a.begin(), std::make_pair(13, "New"));
   b.clear();
   b.insert(a.begin(), a.end());
   print(b);
@@ -83,7 +83,7 @@ void map_tests() {
   print(b);
   title("Observers");
   std::cout << a.key_comp()(1, 1) << std::endl;
-  std::cout << a.value_comp()(ft::make_pair(1, "1"), ft::make_pair(1, "2")) << std::endl;
+  std::cout << a.value_comp()(std::make_pair(1, "1"), std::make_pair(1, "2")) << std::endl;
   title("Operations");
   std::cout << b.find(1)->second << std::endl;
   //std::cout << b.find(-1)->second << std::endl;
