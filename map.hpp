@@ -7,7 +7,6 @@
 #ifndef FT_CONTAINERS_MAP_HPP
 #define FT_CONTAINERS_MAP_HPP
 
-#include "allocator.hpp"
 #include "utils.hpp"
 
 namespace ft {
@@ -396,9 +395,9 @@ class map {
         next_node->right->parent = next_node->parent;
       }
       if (node->parent->right == node) {
-        node->parent->right == next_node;
+        node->parent->right = next_node;
       } else {
-        node->parent->left == next_node;
+        node->parent->left = next_node;
       }
       next_node->right = node->right;
       node->right->parent = next_node;
@@ -445,36 +444,39 @@ class map {
   }
 
   iterator find(const key_type &k) {
+    return iterator((const_cast<const map*>(this)->find(k))._node, _end);
+  }
+
+  const_iterator find(const key_type &k) const {
     _node *current = _end->right;
     while (current != _end) {
       if (current->data.first == k) {
-        return (iterator(current, _end));
+        return (const_iterator(current, _end));
       } else if (_comp(k, current->data.first)) {
         current = current->left;
       } else {
         current = current->right;
       }
     }
-    return iterator(_end, _end);
-  }
-
-  const_iterator find(const key_type &k) const {
-    return find(k);
+    return const_iterator(_end, _end);
   }
 
   size_type count(const key_type &k) const {
-    if (find(k) != _end) {
+    if (find(k) != end()) {
       return 1;
-    } else {
-      return 0;
     }
+    return 0;
   }
 
   iterator lower_bound(const key_type &k) {
-    iterator b = begin();
-    iterator e = end();
+    return iterator((const_cast<const map*>(this)->lower_bound(k))._node, _end);
+  }
+
+  const_iterator lower_bound(const key_type &k) const {
+    const_iterator b = begin();
+    const_iterator e = end();
     while (b != e) {
-      if (_comp(*b.first, k)) {
+      if (!_comp((*b).first, k)) {
         return b;
       }
       ++b;
@@ -482,44 +484,36 @@ class map {
     return e;
   }
 
-  const_iterator lower_bound(const key_type &k) const {
-    return lower_bound(k);
+  iterator upper_bound(const key_type &k) {
+    return iterator((const_cast<const map*>(this)->upper_bound(k))._node, _end);
   }
 
-  iterator upper_bound(const key_type &k) {
-    iterator b = begin();
-    iterator e = end();
+  const_iterator upper_bound(const key_type &k) const {
+    const_iterator b = begin();
+    const_iterator e = end();
     while (b != e) {
-      if (*b.first == k) {
-        return ++b;
+      if (!_comp((*b).first, k)) {
+        if (_comp(k, (*b).first)) {
+          return b;
+        } else {
+          return ++b;
+        }
       }
       ++b;
     }
     return e;
   }
 
-  const_iterator upper_bound(const key_type &k) const {
-    return upper_bound(k);
-  }
-
   pair<iterator, iterator> equal_range(const key_type &k) {
     iterator lower = lower_bound(k);
     iterator upper = upper_bound(k);
-    if (lower == end() || upper == end()) {
-      return ft::make_pair(begin(), begin());
-    } else {
-      return ft::make_pair(lower, upper);
-    }
+    return ft::make_pair(lower, upper);
   }
 
   pair<const_iterator, const_iterator> equal_range(const key_type &k) const {
     const_iterator lower = lower_bound(k);
     const_iterator upper = upper_bound(k);
-    if (lower == end() || upper == end()) {
-      return ft::make_pair(begin(), begin());
-    } else {
-      return ft::make_pair(lower, upper);
-    }
+    return ft::make_pair(lower, upper);
   }
 
  protected:

@@ -5,8 +5,6 @@
 #ifndef FT_CONTAINERS_LIST_HPP
 #define FT_CONTAINERS_LIST_HPP
 
-#include "allocator.hpp"
-#include "iterator.hpp"
 #include "utils.hpp"
 
 namespace ft {

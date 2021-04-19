@@ -17,6 +17,7 @@
 
 void title(std::string s);
 
+void list_tests();
 void vector_tests();
 void stack_tests();
 void queue_tests();

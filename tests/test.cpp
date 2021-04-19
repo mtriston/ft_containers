@@ -7,9 +7,10 @@ void title(std::string s) {
 }
 
 int main() {
-//  vector_tests();
-//  stack_tests();
-//  queue_tests();
+  list_tests();
+  vector_tests();
+  stack_tests();
+  queue_tests();
   map_tests();
   return 0;
 }

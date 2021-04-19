@@ -6,8 +6,6 @@
 #define FT_CONTAINERS__VECTOR_HPP_
 
 #include <stdexcept>      // std::out_of_range
-#include "iterator.hpp"
-#include "allocator.hpp"
 #include "utils.hpp"
 
 namespace ft {

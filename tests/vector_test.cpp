@@ -5,9 +5,9 @@
 #include "test.hpp"
 
 template<typename Container>
-void print_vector(std::string const &msg, const Container &x) {
-  auto itBegin = x.begin();
-  auto itEnd = x.end();
+void print_vector(std::string const &msg, Container &x) {
+  typename Container::iterator itBegin = x.begin();
+  typename Container::iterator itEnd = x.end();
 
   std::cout << msg << ": " << "\033[34m";
   while (itBegin != itEnd) {
